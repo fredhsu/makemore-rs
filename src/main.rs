@@ -1,4 +1,5 @@
 use std::{
+    collections::{BTreeMap, HashMap},
     fs::File,
     io::{prelude::*, BufReader},
 };
@@ -22,18 +23,28 @@ fn main() {
 
     // starting with bigram language model
     // go through each word and pull out bigram
-    for word in lines[0..3].iter() {
+    let mut b = HashMap::new();
+    let mut chs2 = vec![];
+    for word in lines.iter() {
         // need to treat each character of word as a string, then concat that with starting and
         // ending string
-        let w = word.chars().map(|x| x.to_string()).collect();
+        let w: Vec<String> = word.chars().map(|x| x.to_string()).collect();
         let chs = vec![vec!["<S>".to_string()], w, vec!["<E>".to_string()]]
             .into_iter()
             .flatten()
             .collect::<Vec<String>>();
+        chs2.resize(chs.len() - 1, "".to_string());
+        chs2.clone_from_slice(&chs[1..]);
 
-        //for (ch1, ch2) in word.chars().zip(word[1..].chars()) {
-        for (ch1, ch2) in chs.clone().into_iter().zip(chs[1..].into_iter()) {
-            println!("{ch1}, {ch2}");
+        let bigrams = chs.clone().into_iter().zip(chs2.clone().into_iter());
+        //for bigram in chs.clone().into_iter().zip(chs2[1..].into_iter()) {
+        for bigram in bigrams {
+            //dbg!(&bigram);
+            b.entry(bigram).and_modify(|c| *c += 1).or_insert(1);
         }
     }
+    assert_eq!(b[&("<S>".to_string(), "e".to_string())], 1531);
+    let mut count_vec: Vec<_> = b.iter().collect();
+    count_vec.sort_by(|a, b| b.1.cmp(a.1));
+    println!("{:?}", count_vec);
 }
