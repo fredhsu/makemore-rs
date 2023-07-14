@@ -28,12 +28,9 @@ fn main() {
     for word in lines.iter() {
         // need to treat each character of word as a string, then concat that with starting and
         // ending string
-<<<<<<< HEAD
         let w: Vec<String> = word.chars().map(|x| x.to_string()).collect();
-=======
-        let w = word.chars().map(|x| x.to_string()).collect();
+        //let w = word.chars().map(|x| x.to_string()).collect();
         println!("{w:?}");
->>>>>>> c0c6559 (update)
         let chs = vec![vec!["<S>".to_string()], w, vec!["<E>".to_string()]]
             .into_iter()
             .flatten()
@@ -41,18 +38,16 @@ fn main() {
         chs2.resize(chs.len() - 1, "".to_string());
         chs2.clone_from_slice(&chs[1..]);
 
-<<<<<<< HEAD
         let bigrams = chs.clone().into_iter().zip(chs2.clone().into_iter());
         //for bigram in chs.clone().into_iter().zip(chs2[1..].into_iter()) {
         for bigram in bigrams {
             //dbg!(&bigram);
             b.entry(bigram).and_modify(|c| *c += 1).or_insert(1);
-=======
+        }
         //for (ch1, ch2) in word.chars().zip(word[1..].chars()) {
         println!("{chs:?}");
         for (ch1, ch2) in chs.clone().into_iter().zip(chs[1..].into_iter()) {
             println!("{ch1}, {ch2}");
->>>>>>> c0c6559 (update)
         }
     }
     assert_eq!(b[&("<S>".to_string(), "e".to_string())], 1531);
